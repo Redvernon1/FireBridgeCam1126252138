@@ -37,7 +37,7 @@ def _unit_scale_to_mm(unit: Optional[str]) -> float:
     Convert coordinate units to millimeters. 
 
     Supported:
-      - mm, millimeter → 1. 0
+      - mm, millimeter → 1.0
       - inch, in → 25.4
       - cm → 10.0
       - px (fallback 96 DPI) → 25.4 / 96
@@ -45,17 +45,17 @@ def _unit_scale_to_mm(unit: Optional[str]) -> float:
     If unknown or None → default 1.0 (mm). 
     """
     if not unit:
-        return 1. 0
-    u = unit.strip(). lower()
+        return 1.0
+    u = unit.strip().lower()
     if u in ("mm", "millimeter", "millimeters"):
-        return 1. 0
+        return 1.0
     if u in ("inch", "inches", "in"):
         return 25.4
     if u in ("cm", "centimeter", "centimeters"):
         return 10.0
     if u in ("px", "pixels", "pixel"):
         # 96 DPI fallback
-        return 25.4 / 96. 0
+        return 25.4 / 96.0
     return 1.0
 
 
@@ -77,10 +77,10 @@ def _flatten_path_points(path: "Path", tol_mm: float) -> List[Tuple[float, float
     try:
         length = max(path.length(error=1e-4), 1e-3)
     except Exception:
-        length = 1. 0
+        length = 1.0
 
     # Estimate number of segments
-    segs = max(64, int((length * 1. 0) / max(tol_mm, 1e-3)))
+    segs = max(64, int((length * 1.0) / max(tol_mm, 1e-3)))
 
     for i in range(segs + 1):
         t = i / segs
@@ -106,10 +106,10 @@ def _split_path_by_moves(d_string: str) -> List[str]:
     
     # Split by M or m commands (case-insensitive move commands)
     # Keep the M/m in the result
-    parts = re.split(r'(? =[Mm])', d_string. strip())
+    parts = re.split(r'(?=[Mm])', d_string.strip())
     
     # Filter out empty strings
-    subpaths = [p. strip() for p in parts if p.strip()]
+    subpaths = [p.strip() for p in parts if p.strip()]
     
     return subpaths
 
@@ -143,7 +143,7 @@ def load_svg(filepath: str) -> List[Dict]:
         return []
 
     # Extract all <path> elements with regex
-    path_pattern = re.compile(r'<path\s+([^>]+)/? >', re.IGNORECASE)
+    path_pattern = re.compile(r'<path\s+([^>]+)/?>', re.IGNORECASE)
     path_matches = path_pattern.findall(svg_content)
 
     current_units = None
@@ -154,7 +154,7 @@ def load_svg(filepath: str) -> List[Dict]:
     except Exception:
         current_units = "metric"
 
-    tol_mm = 0.05 if str(current_units or "metric"). startswith("met") else 0.002
+    tol_mm = 0.05 if str(current_units or "metric").startswith("met") else 0.002
 
     for path_attrs_str in path_matches:
         # Parse attributes
@@ -171,7 +171,7 @@ def load_svg(filepath: str) -> List[Dict]:
         subpath_strings = _split_path_by_moves(d_attr)
 
         for subpath_str in subpath_strings:
-            if not subpath_str. strip():
+            if not subpath_str.strip():
                 continue
 
             try:

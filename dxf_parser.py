@@ -1,4 +1,4 @@
-# plasma_core/parsers/dxf_parser. py
+# plasma_core/parsers/dxf_parser.py
 # Fixed: one path per entity – Nov 2025
 from __future__ import annotations
 
@@ -15,9 +15,9 @@ except ImportError:
 
 def _unit_scale_to_mm(units: str) -> float:
     if not units:
-        return 1. 0
+        return 1.0
     u = units.strip().lower()
-    if u. startswith("in"):
+    if u.startswith("in"):
         return 25.4
     return 1.0
 
@@ -27,7 +27,7 @@ def _flatten_entity(entity, tol: float) -> List[Tuple[float, float]]:
     
     # Try flattening first
     try:
-        for x, y, *_ in entity. flattening(tol):
+        for x, y, *_ in entity.flattening(tol):
             pts.append((float(x), float(y)))
         if pts:
             return pts
@@ -36,14 +36,14 @@ def _flatten_entity(entity, tol: float) -> List[Tuple[float, float]]:
 
     # Fallback to entity-specific handling
     try:
-        t = entity. dxftype()
+        t = entity.dxftype()
     except Exception:
         return []
 
     try:
         if t == "LINE":
-            s, e = entity. dxf.start, entity.dxf.end
-            return [(float(s.x), float(s.y)), (float(e. x), float(e.y))]
+            s, e = entity.dxf.start, entity.dxf.end
+            return [(float(s.x), float(s.y)), (float(e.x), float(e.y))]
         
         if t == "ARC":
             c, r = entity.dxf.center, float(entity.dxf.radius)
@@ -55,16 +55,16 @@ def _flatten_entity(entity, tol: float) -> List[Tuple[float, float]]:
             out = []
             for i in range(n + 1):
                 ang = math.radians(a1 + sw * i / n)
-                out.append((c. x + r * math.cos(ang), c.y + r * math.sin(ang)))
+                out.append((c.x + r * math.cos(ang), c.y + r * math.sin(ang)))
             return [(float(x), float(y)) for x, y in out]
         
         if t == "CIRCLE":
-            c, r = entity. dxf.center, float(entity.dxf.radius)
+            c, r = entity.dxf.center, float(entity.dxf.radius)
             n = 64
             out = []
             for i in range(n + 1):
                 ang = 2 * math.pi * i / n
-                out.append((c.x + r * math. cos(ang), c.y + r * math.sin(ang)))
+                out.append((c.x + r * math.cos(ang), c.y + r * math.sin(ang)))
             return [(float(x), float(y)) for x, y in out]
         
         if t == "ELLIPSE":
@@ -74,7 +74,7 @@ def _flatten_entity(entity, tol: float) -> List[Tuple[float, float]]:
             return [(float(x), float(y)) for x, y in out]
         
         if t == "SPLINE":
-            tool = entity. construction_tool()
+            tool = entity.construction_tool()
             n = 128
             out = []
             for i in range(n + 1):
@@ -89,7 +89,7 @@ def _flatten_entity(entity, tol: float) -> List[Tuple[float, float]]:
             cp = []
             try:
                 for p in entity.control_points:
-                    cp. append((float(p[0]), float(p[1])))
+                    cp.append((float(p[0]), float(p[1])))
             except Exception:
                 pass
             return cp
